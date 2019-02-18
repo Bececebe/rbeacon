@@ -1,1 +1,55 @@
-primera compilacion
+Análisis crítico de las pruebas:
+
+Test 1 close_closed_beacon_test() No aumenta la cobertura de manera apreciable pero responde a una posible secuencia de uso que se debe comprobar 
+
+Test 2 subscribe_using_string_and_filtering_test() Aumenta la cobertura de manera apreciable pero no se encuentra ningun error. Aun así responde a una posible secuencia
+de uso que se debe comprobar 
+
+ Test 3 subscription_unsubscription_test() Aumenta la cobertura de manera apreciable. Caso de prueba interesante. Responde a una secuencia habitual de uso (
+publico un anuncio,me subscribo a él,veo que lo recibo normalmente,me desubscribo y espero 200 ms ya que envia cada 10 ms.
+Finalmente compruebo que no recibo nada)
+
+Test 4 hostname_and_broadcast_ip_test() Este caso de prueba no deberia estar en nuestro bloque de pruebas posteriores a su comprobación si no subiera la cobertura 
+ya que puede llevar a confusión. En este caso si aumenta la cobertura.
+
+Test 5 set_invalid_interval_test() (set interval con un intervalo no correcto ya que es un  atomo y se comprueba que da error) No aumenta cobertura pero si es interesante 
+probarlo.
+
+Test 6 setopts_test() Aumenta la cobertura de manera muy apreciable y se puede apreciar que el código fuente presenta código duplicado Internamente set_interval debería llamar 
+a set_option si se quisieran conservar las dos operaciones. 
+
+Test 7 creator_can_control_test() Aumenta cobertura y responde a una posible secuencia de uso que se debe comprobar
+
+Test 8 not_creator_cannot_control_test() No auenta cobertura de forma muy apreciable.
+
+ Test 9 silence_test()  Auenta cobertura de forma muy apreciable. Caso de prueba interesante que comprueba una secuencia habitual de uso ( tenemos un cliente que
+se subscribe,silenciamos el envio y esperamos para comprobar que no se  recibe nada puesto q se ha silenciado)
+
+Test 10 set_interval_twice_test() Aumenta la cobertura pero no comprueba los efectos secundarios que tiene la interacción. No se puede asegurar que el set_interval cambie
+el intervalo.
+
+Interesantes para mantener,silence_test() y ssubscription_unsubscription_test(). Las demás aumentan cobertura pero no aumentan confianza en el código.
+
+
+Clasificación de las pruebas:
+Todas estas pertenecen a pruebas funcionales de caja negra
+
+close_closed_beacon_test() -> Tecnica Transición entre estados
+
+subscribe_using_string_and_filtering_test() -> Análisis de valores borde
+
+subscription_unsubscription_test() -> Tecnica Transición entre estados
+
+hostname_and_broadcast_ip_test() -> 
+
+set_invalid_interval_test() -> Análisis de valores borde
+
+setopts_test() -> Tecnica Transición entre estados
+
+creator_can_control_test() -> Tecnica Transición entre estados
+
+not_creator_cannot_control_test() -> Tecnica Transición entre estados
+
+silence_test() -> Tecnica Transición entre estados
+
+set_interval_twice_test() ->
