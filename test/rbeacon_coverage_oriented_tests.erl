@@ -133,11 +133,11 @@ silence_test() ->
     true.
 
 %% 1 test (5 lines) => 70% to 71%
-set_interval_twice_test() ->
-    {ok, Service} = rbeacon:new(9999),
-    ?assertEqual(ok, rbeacon:set_interval(Service, 100)),
-    ok = rbeacon:publish(Service, <<"announcement">>),
-    ?assertEqual(ok, rbeacon:set_interval(Service, 500)),
-    ok = rbeacon:close(Service),
+%%set_interval_twice_test() ->
+  %%  {ok, Service} = rbeacon:new(9999),
+    %%?assertEqual(ok, rbeacon:set_interval(Service, 100)),
+    %%ok = rbeacon:publish(Service, <<"announcement">>),
+    %%?assertEqual(ok, rbeacon:set_interval(Service, 500)),
+    %%ok = rbeacon:close(Service),
     
-    true.
+    %%true.
