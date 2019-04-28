@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/Bececebe/rbeacon.svg?branch=master)](https://travis-ci.org/Bececebe/rbeacon)
 [![Coverage Status](https://coveralls.io/repos/github/Bececebe/rbeacon/badge.svg?branch=master)](https://coveralls.io/github/Bececebe/rbeacon?branch=master)
+
 Copyright (c) 2014 Benoît Chesneau.
 
 __Version:__ 0.3.0
