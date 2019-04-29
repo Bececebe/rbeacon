@@ -36,13 +36,11 @@ Todas estas pertenecen a pruebas funcionales de caja negra
 
 close_closed_beacon_test() -> Tecnica Transición entre estados
 
-subscribe_using_string_and_filtering_test() -> Análisis de valores borde
+subscribe_using_string_and_filtering_test() -> Tecnica Transición entre estados
 
 subscription_unsubscription_test() -> Tecnica Transición entre estados
 
-hostname_and_broadcast_ip_test() -> 
-
-set_invalid_interval_test() -> Análisis de valores borde
+set_invalid_interval_test() -> Análisis de particiones equivalentes (prueba negativa)
 
 setopts_test() -> Tecnica Transición entre estados
 

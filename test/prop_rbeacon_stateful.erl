@@ -26,7 +26,8 @@ initial_state() ->
 command(S) ->
     oneof([{call, rbeacon, new, [user_udp_port()]},
            {call, ?MODULE, close, [S#test_state.rbeacon]},
-           {call, ?MODULE, publish, [S#test_state.rbeacon, binary()]}
+           {call, ?MODULE, publish, [S#test_state.rbeacon, binary()]},
+           {call, rbeacon, hostname, [S#test_state.rbeacon]}
           ]).
 
 % UDP ports 49152 through 65535
@@ -40,6 +41,8 @@ next_state(S, _V, {call, ?MODULE, close, _Beacon}) ->
     S#test_state{rbeacon = null};
 next_state(S, _V, {call, ?MODULE, publish, [_Beacon, Binary]}) ->
     S#test_state{message = Binary}.
+%next_state(S, _V, {call, rbeacon, hostname, _Beacon}) ->
+ %   S#test_state{rbeacon=rbeacon}.
 
 
 %% @doc Precondition, checked before command is added to the command sequence.
@@ -49,6 +52,8 @@ precondition(S, {call, ?MODULE, close, _Beacon}) ->
     S#test_state.rbeacon =/= null;
 precondition(S, {call, ?MODULE, publish, [_Beacon, _Binary]}) ->
     S#test_state.rbeacon =/= null;
+%precondition(S, {call, rbeacon, hostname, _Beacon}) ->
+%    S#test_state.rbeacon =/= null;
 precondition(_S, _Call) ->
     false.
 
