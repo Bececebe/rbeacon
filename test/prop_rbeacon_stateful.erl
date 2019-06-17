@@ -3,11 +3,12 @@
 
 -export([command/1, initial_state/0, next_state/3,
          precondition/2, postcondition/3]).
--export([close/1, publish/2, broadcast_ip/1, subscribe/2, recv/1, unsubscribe/1]).
+-export([close/1, publish/2, broadcast_ip/1, subscribe/2, recv/1, unsubscribe/1, silence/1, noecho/1]).
 
 -record(test_state,{rbeacon=null,
                     message=null,
-                    subscribed=false}).
+                    subscribed=false,
+                    noecho=false}).
 
 %% @doc Default property
 prop_prop_rbeacon_stateful() ->
@@ -32,7 +33,9 @@ command(S) ->
            {call, ?MODULE, broadcast_ip, [S#test_state.rbeacon]},
            {call, ?MODULE, subscribe, [S#test_state.rbeacon,""]},%filtra todos los mj ""
            {call, ?MODULE, recv, [S#test_state.rbeacon]},
-           {call, ?MODULE, unsubscribe, [S#test_state.rbeacon]}%filtra todos los mj ""
+           {call, ?MODULE, unsubscribe, [S#test_state.rbeacon]},
+           {call, ?MODULE, silence, [S#test_state.rbeacon]},
+           {call, ?MODULE, noecho, [S#test_state.rbeacon]}
           ]).
 
 % UDP ports 49152 through 65535
@@ -53,7 +56,11 @@ next_state(S, _V, {call, ?MODULE, subscribe,[_Beacon, _Binary]}) ->
 next_state(S, _V, {call, ?MODULE, recv, _Beacon}) ->
     S=S;
 next_state(S, _V, {call, ?MODULE, unsubscribe,[_Beacon]}) ->
-     S#test_state{subscribed = false}.
+     S#test_state{subscribed = false};
+next_state(S, _V, {call, ?MODULE, silence, [_Beacon]}) ->
+    S#test_state{message = null};
+next_state(S, _V, {call, ?MODULE, noecho, [_Beacon]}) ->
+    S#test_state{noecho = true}.
 
 % para indicar cuando NO quiero un comando con esto indico que las llamadas pertinentes son new close new close new close
 %% @doc Precondition, checked before command is added to the command sequence.
@@ -71,6 +78,10 @@ precondition(S, {call, ?MODULE, recv, [_Beacon]}) ->
     (S#test_state.rbeacon =/= null ) and (S#test_state.message =/= null) and (S#test_state.subscribed == true);
 precondition(S, {call, ?MODULE, unsubscribe, [_Beacon]}) ->
     (S#test_state.rbeacon =/= null ) and (S#test_state.subscribed == true);
+precondition(S, {call, ?MODULE, silence, [_Beacon]}) ->
+    S#test_state.rbeacon =/= null;    
+precondition(S, {call, ?MODULE, noecho, [_Beacon]}) ->
+    S#test_state.rbeacon =/= null;
 precondition(_S, _Call) ->
     false.
 
@@ -94,6 +105,10 @@ postcondition(_S, {call, ?MODULE, recv, _Beacon}, {ok, msg, dir}) ->%deberia rec
     %msg==_S#test_state.message;
     false;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555????????????????????''''
 postcondition(_S, {call, ?MODULE, unsubscribe, [_Beacon]}, ok) ->
+    true;
+postcondition(_S, {call, ?MODULE, silence, [_Beacon]}, ok) ->
+    true;
+postcondition(_S, {call, ?MODULE, noecho, [_Beacon]}, ok) ->
     true;
 postcondition(_S, _Call, _Res) ->
     true.
@@ -119,3 +134,9 @@ recv({ok, Beacon}) ->
 
 unsubscribe({ok, Beacon}) ->
     rbeacon:unsubscribe(Beacon).
+    
+silence({ok, Beacon}) ->
+    rbeacon:silence(Beacon).
+    
+noecho({ok, Beacon}) ->
+    rbeacon:noecho(Beacon).
