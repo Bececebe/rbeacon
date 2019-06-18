@@ -4,7 +4,7 @@
 -export([command/1, initial_state/0, next_state/3,
          precondition/2, postcondition/3]).
 -export([close/1, publish/2, broadcast_ip/1, subscribe/2, recv/1, unsubscribe/1, silence/1, noecho/1,
-		new2/1,close2/1, publish2/2, broadcast_ip2/1, subscribe2/2, recv2/1, unsubscribe2/1, silence2/1, noecho2/1]).
+		close2/1, publish2/2, broadcast_ip2/1, subscribe2/2, recv2/1, unsubscribe2/1, silence2/1, noecho2/1]).
 
 -record(test_state,{rbeacon = null,
                     message = null,
@@ -34,25 +34,25 @@ initial_state() ->
 %% @doc Command generator, S is the current state
 command(S) ->
     oneof([
-		   %{call, rbeacon, new, [user_udp_port()]},
-           %{call, ?MODULE, close, [S#test_state.rbeacon]}
-           %{call, ?MODULE, publish, [S#test_state.rbeacon, binary()]},
-           %{call, ?MODULE, broadcast_ip, [S#test_state.rbeacon]},
-           %{call, ?MODULE, subscribe, [S#test_state.rbeacon,""]},%filtra todos los mj ""
-           %{call, ?MODULE, recv, [S#test_state.rbeacon]},
-           %{call, ?MODULE, unsubscribe, [S#test_state.rbeacon]},
-           %{call, ?MODULE, silence, [S#test_state.rbeacon]},
-           %{call, ?MODULE, noecho, [S#test_state.rbeacon]},
+		   {call, rbeacon, new, [user_udp_port()]},
+           {call, ?MODULE, close, [S#test_state.rbeacon]},
+           {call, ?MODULE, publish, [S#test_state.rbeacon, binary()]},
+           {call, ?MODULE, broadcast_ip, [S#test_state.rbeacon]},
+           {call, ?MODULE, subscribe, [S#test_state.rbeacon,""]},%filtra todos los mj ""
+           {call, ?MODULE, recv, [S#test_state.rbeacon]},
+           {call, ?MODULE, unsubscribe, [S#test_state.rbeacon]},
+           {call, ?MODULE, silence, [S#test_state.rbeacon]},
+           {call, ?MODULE, noecho, [S#test_state.rbeacon]},
            
-           {call, ?MODULE, new2, [user_udp_port()]},
-           {call, ?MODULE, close2, [S#test_state.rbeacon2]}
-           %{call, ?MODULE, publish2, [S#test_state.rbeacon2, binary()]},
-           %{call, ?MODULE, broadcast_ip2, [S#test_state.rbeacon2]},
-           %{call, ?MODULE, subscribe2, [S#test_state.rbeacon2,""]},%filtra todos los mj ""
-           %{call, ?MODULE, recv2, [S#test_state.rbeacon2]},
-           %{call, ?MODULE, unsubscribe2, [S#test_state.rbeacon2]}
-           %{call, ?MODULE, silence2, [S#test_state.rbeacon2]}
-           %{call, ?MODULE, noecho2, [S#test_state.rbeacon2]}
+           
+           {call, ?MODULE, close2, [S#test_state.rbeacon2]},
+           {call, ?MODULE, publish2, [S#test_state.rbeacon2, binary()]},
+           {call, ?MODULE, broadcast_ip2, [S#test_state.rbeacon2]},
+           {call, ?MODULE, subscribe2, [S#test_state.rbeacon2,""]},%filtra todos los mj ""
+           {call, ?MODULE, recv2, [S#test_state.rbeacon2]},
+           {call, ?MODULE, unsubscribe2, [S#test_state.rbeacon2]},
+           {call, ?MODULE, silence2, [S#test_state.rbeacon2]},
+           {call, ?MODULE, noecho2, [S#test_state.rbeacon2]}
           ]).
 
 % UDP ports 49152 through 65535
@@ -61,7 +61,10 @@ user_udp_port() ->
 
 %% @doc Next state transformation, S is the current state. Returns next state.
 next_state(S, V, {call, rbeacon, new, _Port}) ->
-    S#test_state{rbeacon = V};
+	case S#test_state.rbeacon of
+		null -> S#test_state{rbeacon = V};
+		_ -> S#test_state{rbeacon2 = V}
+		end;
 next_state(S, _V, {call, ?MODULE, close, _Beacon}) ->
     S#test_state{rbeacon = null,subscribed = false,message = null,noecho=false};
 next_state(S, _V, {call, ?MODULE, publish, [_Beacon, Binary]}) ->
@@ -79,8 +82,7 @@ next_state(S, _V, {call, ?MODULE, silence, [_Beacon]}) ->
 next_state(S, _V, {call, ?MODULE, noecho, [_Beacon]}) ->
     S#test_state{noecho = true};
 
-next_state(S, V, {call, ?MODULE, new2, _Port}) ->
-    S#test_state{rbeacon2 = V};
+
 next_state(S, _V, {call, ?MODULE, close2, _Beacon}) ->
     S#test_state{rbeacon2 = null,subscribed2 = false,message2 = null,noecho2=false};
 next_state(S, _V, {call, ?MODULE, publish2, [_Beacon, Binary]}) ->
@@ -101,7 +103,7 @@ next_state(S, _V, {call, ?MODULE, noecho2, [_Beacon]}) ->
 % para indicar cuando NO quiero un comando con esto indico que las llamadas pertinentes son new close new close new close
 %% @doc Precondition, checked before command is added to the command sequence.
 precondition(S, {call, rbeacon, new, _Port}) ->
-    S#test_state.rbeacon == null;
+    (S#test_state.rbeacon == null) or (S#test_state.rbeacon2 == null);
 precondition(S, {call, ?MODULE, close, _Beacon}) ->
     S#test_state.rbeacon =/= null;
 precondition(S, {call, ?MODULE, publish, [_Beacon, _Binary]}) ->
@@ -120,8 +122,7 @@ precondition(S, {call, ?MODULE, silence, [_Beacon]}) ->
 precondition(S, {call, ?MODULE, noecho, [_Beacon]}) ->
     S#test_state.rbeacon =/= null;
     
-precondition(S, {call, ?MODULE, new2, _Port}) ->
-    S#test_state.rbeacon2 == null;
+
 precondition(S, {call, ?MODULE, close2, _Beacon}) ->
     S#test_state.rbeacon2 =/= null;
 precondition(S, {call, ?MODULE, publish2, [_Beacon, _Binary]}) ->
@@ -169,8 +170,7 @@ postcondition(_S, {call, ?MODULE, noecho, [_Beacon]}, ok) ->
     true;
 
     
-postcondition(_S, {call, ?MODULE, new2, _Port}, {ok, Beacon}) ->
-    is_pid(Beacon);
+
 postcondition(_S, {call, ?MODULE, publish2, [_Beacon, _Binary]}, ok) ->
     true;
     
@@ -248,5 +248,4 @@ silence2({ok, Beacon}) ->
 noecho2({ok, Beacon}) ->
     rbeacon:noecho(Beacon).
 
-new2({udp_port}) ->
-    rbeacon:new({udp_port}).
+
