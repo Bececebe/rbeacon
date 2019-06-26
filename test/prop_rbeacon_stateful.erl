@@ -153,7 +153,7 @@ postcondition(_S, {call, ?MODULE, broadcast_ip, _Beacon}, Msg) ->
 	is_list(io_lib:write(Msg));
 postcondition(_S, {call, ?MODULE, subscribe, [_Beacon, _Binary]}, ok) ->
     true;
-postcondition(_S, {call, ?MODULE, recv, _Beacon}, {ok,_Addr,Msg}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}/////////////////
+postcondition(_S, {call, ?MODULE, recv, _Beacon}, {ok,Msg,_Addr}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}/////////////////
 	%Msg == _S#test_state.message;
 	equals(Msg, _S#test_state.message);
 postcondition(_S, {call, ?MODULE, unsubscribe, [_Beacon]}, ok) ->
@@ -215,6 +215,8 @@ noecho({ok, Beacon}) ->
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Mismas funciones pero para un segundo Beacon
+new2(UdpPort) ->
+    rbeacon:new(UdpPort).
 close2({ok, Beacon}) ->
     rbeacon:close(Beacon).
 
@@ -239,5 +241,4 @@ silence2({ok, Beacon}) ->
 noecho2({ok, Beacon}) ->
     rbeacon:noecho(Beacon).
 
-new2(UdpPort) ->
-    rbeacon:new(UdpPort).
+
