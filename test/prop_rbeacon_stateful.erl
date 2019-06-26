@@ -34,24 +34,24 @@ initial_state() ->
 %% @doc Command generator, S is the current state
 command(S) ->
     oneof([
-		   %{call, rbeacon, new, [user_udp_port()]},
-           %{call, ?MODULE, close, [S#test_state.rbeacon]}
-           %{call, ?MODULE, publish, [S#test_state.rbeacon, binary()]},
-           %{call, ?MODULE, broadcast_ip, [S#test_state.rbeacon]},
-           %{call, ?MODULE, subscribe, [S#test_state.rbeacon,""]},%filtra todos los mj ""
-           %{call, ?MODULE, recv, [S#test_state.rbeacon]},
-           %{call, ?MODULE, unsubscribe, [S#test_state.rbeacon]},
-           %{call, ?MODULE, silence, [S#test_state.rbeacon]},
+		   {call, rbeacon, new, [user_udp_port()]},
+           {call, ?MODULE, close, [S#test_state.rbeacon]},
+           {call, ?MODULE, publish, [S#test_state.rbeacon, binary()]},
+           {call, ?MODULE, broadcast_ip, [S#test_state.rbeacon]},
+           {call, ?MODULE, subscribe, [S#test_state.rbeacon,""]},%filtra todos los mj ""
+           {call, ?MODULE, recv, [S#test_state.rbeacon]},
+           {call, ?MODULE, unsubscribe, [S#test_state.rbeacon]},
+           {call, ?MODULE, silence, [S#test_state.rbeacon]}
            %{call, ?MODULE, noecho, [S#test_state.rbeacon]},
            
-           {call, ?MODULE, new2, [user_udp_port()]},
-           {call, ?MODULE, close2, [S#test_state.rbeacon2]}
+           %{call, ?MODULE, new2, [user_udp_port()]},
+           %{call, ?MODULE, close2, [S#test_state.rbeacon2]},
            %{call, ?MODULE, publish2, [S#test_state.rbeacon2, binary()]},
            %{call, ?MODULE, broadcast_ip2, [S#test_state.rbeacon2]},
            %{call, ?MODULE, subscribe2, [S#test_state.rbeacon2,""]},%filtra todos los mj ""
            %{call, ?MODULE, recv2, [S#test_state.rbeacon2]},
            %{call, ?MODULE, unsubscribe2, [S#test_state.rbeacon2]}
-           %{call, ?MODULE, silence2, [S#test_state.rbeacon2]}
+           %{call, ?MODULE, silence2, [S#test_state.rbeacon2]},
            %{call, ?MODULE, noecho2, [S#test_state.rbeacon2]}
           ]).
 
@@ -148,19 +148,14 @@ precondition(_S, _Call) ->
 postcondition(_S, {call, rbeacon, new, _Port}, {ok, Beacon}) ->
     is_pid(Beacon);
 postcondition(_S, {call, ?MODULE, publish, [_Beacon, _Binary]}, ok) ->
-    true;
-    
-postcondition(_S, {call, ?MODULE, broadcast_ip, _Beacon}, {msg}) ->%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555????????????????????''''
-	false;
-	%true;
-    %is_bitstring (msg);
-    %is_bitstring (unicode:characters_to_binary(msg));
-    %is_binary(msg);
+    true; 
+postcondition(_S, {call, ?MODULE, broadcast_ip, _Beacon}, Msg) ->
+	is_list(io_lib:write(Msg));
 postcondition(_S, {call, ?MODULE, subscribe, [_Beacon, _Binary]}, ok) ->
     true;
-postcondition(_S, {call, ?MODULE, recv, _Beacon}, {ok, msg, dir}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}
-    %msg==_S#test_state.message;
-    false;%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555????????????????????''''
+postcondition(_S, {call, ?MODULE, recv, _Beacon}, {ok,_Addr,Msg}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}/////////////////
+	%Msg == _S#test_state.message;
+	equals(Msg, _S#test_state.message);
 postcondition(_S, {call, ?MODULE, unsubscribe, [_Beacon]}, ok) ->
     true;
 postcondition(_S, {call, ?MODULE, silence, [_Beacon]}, ok) ->
@@ -174,12 +169,8 @@ postcondition(_S, {call, ?MODULE, new2, _Port}, {ok, Beacon}) ->
 postcondition(_S, {call, ?MODULE, publish2, [_Beacon, _Binary]}, ok) ->
     true;
     
-postcondition(_S, {call, ?MODULE, broadcast_ip2, _Beacon}, {msg}) ->%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555????????????????????''''
-	false;
-	%true;
-    %is_bitstring (msg);
-    %is_bitstring (unicode:characters_to_binary(msg));
-    %is_binary(msg);
+postcondition(_S, {call, ?MODULE, broadcast_ip2, _Beacon}, Msg) ->%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555????????????????????''''
+	is_list(io_lib:write(Msg));
 postcondition(_S, {call, ?MODULE, subscribe2, [_Beacon, _Binary]}, ok) ->
     true;
 postcondition(_S, {call, ?MODULE, recv2, _Beacon}, {ok, msg, dir}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}
@@ -248,5 +239,5 @@ silence2({ok, Beacon}) ->
 noecho2({ok, Beacon}) ->
     rbeacon:noecho(Beacon).
 
-new2({udp_port}) ->
-    rbeacon:new({udp_port}).
+new2(UdpPort) ->
+    rbeacon:new(UdpPort).
