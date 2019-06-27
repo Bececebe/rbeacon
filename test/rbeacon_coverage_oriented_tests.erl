@@ -165,6 +165,7 @@ new_no_echo_test() ->
 	ok = rbeacon:set_interval(Client, 100),
 	ok = rbeacon:publish(Client, unicode:characters_to_binary("Adios")),
 	?assertEqual(ok, rbeacon:noecho(Service)),
+	timer:sleep(200),
 	?assertMatch({ok, <<"Adios">>, _Addr} , rbeacon:recv(Service,200)),
 	ok = rbeacon:close(Service),
     ok = rbeacon:close(Client),
