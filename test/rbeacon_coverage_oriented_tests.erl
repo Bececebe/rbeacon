@@ -141,3 +141,35 @@ set_interval_twice_test() ->
     ok = rbeacon:close(Service),
     
     true.
+    
+no_echo_test() ->
+	{ok, Service} = rbeacon:new(9999),
+	ok = rbeacon:set_interval(Service, 100),
+	ok = rbeacon:publish(Service, unicode:characters_to_binary("Hola")),
+	ok = rbeacon:subscribe(Service, <<>>),
+	{ok, _Msg, _Addr} = rbeacon:recv(Service),
+	?assertEqual(ok, rbeacon:noecho(Service)),
+	Received = rbeacon:recv(Service, 200),
+    ?assertMatch({error, _}, Received),
+	ok = rbeacon:close(Service),
+	true.
+	
+new_no_echo_test() ->
+	{ok, Service} = rbeacon:new(9999),
+	ok = rbeacon:set_interval(Service, 100),
+	ok = rbeacon:publish(Service, unicode:characters_to_binary("Hola")),
+	ok = rbeacon:subscribe(Service, <<>>),
+	{ok, Msg, _Addr} = rbeacon:recv(Service),
+	?assertEqual(unicode:characters_to_binary("Hola"), Msg),
+	{ok, Client} = rbeacon:new(9999),
+	ok = rbeacon:set_interval(Client, 100),
+	ok = rbeacon:publish(Client, unicode:characters_to_binary("Adios")),
+	?assertEqual(ok, rbeacon:noecho(Service)),
+	?assertMatch({ok, <<"Adios">>, _Addr} , rbeacon:recv(Service,200)),
+	ok = rbeacon:close(Service),
+    ok = rbeacon:close(Client),
+	true.
+%  c(rbeacon_coverage_oriented_tests).
+%  rbeacon_coverage_oriented_tests:no_echo_test().
+
+	
