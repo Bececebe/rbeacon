@@ -149,8 +149,8 @@ postcondition(_S, {call, ?MODULE, publish, [_Beacon, _Binary]}, ok) ->
     true; 
 postcondition(_S, {call, ?MODULE, subscribe, [_Beacon, _Binary]}, ok) ->
     true;
-postcondition(_S, {call, ?MODULE, recv, _Beacon}, {ok,_Msg,_Addr}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}/////////////////
-	true;
+postcondition(_S, {call, ?MODULE, recv, _Beacon}, {ok,Msg,_Addr}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}/////////////////
+	((Msg == _S#test_state.message) or (Msg == _S#test_state.message2));
 postcondition(_S, {call, ?MODULE, unsubscribe, [_Beacon]}, ok) ->
     true;
 postcondition(_S, {call, ?MODULE, noecho, [_Beacon]}, ok) ->
@@ -170,8 +170,8 @@ postcondition(_S, {call, ?MODULE, publish2, [_Beacon, _Binary]}, ok) ->
     true;  
 postcondition(_S, {call, ?MODULE, subscribe2, [_Beacon, _Binary]}, ok) ->
     true;
-postcondition(_S, {call, ?MODULE, recv2, _Beacon}, {ok, _Msg, _Addr}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}
-	true;
+postcondition(_S, {call, ?MODULE, recv2, _Beacon}, {ok, Msg, _Addr}) ->%deberia recibir algo como {ok,<<"String">>,{192,168,1,35}}
+	((Msg == _S#test_state.message) or (Msg == _S#test_state.message2));
 postcondition(_S, {call, ?MODULE, unsubscribe2, [_Beacon]}, ok) ->
     true;
 postcondition(_S, {call, ?MODULE, noecho2, [_Beacon]}, ok) ->
