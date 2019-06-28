@@ -193,7 +193,7 @@ subscribe({ok, Beacon}, Binary) ->
     rbeacon:subscribe(Beacon, Binary).
 
 recv({ok, Beacon}) ->
-    rbeacon:recv(Beacon).
+    rbeacon:recv(Beacon,200).
 
 unsubscribe({ok, Beacon}) ->
     rbeacon:unsubscribe(Beacon).
@@ -221,7 +221,7 @@ subscribe2({ok, Beacon}, Binary) ->
     rbeacon:subscribe(Beacon, Binary).
 
 recv2({ok, Beacon}) ->
-    rbeacon:recv(Beacon).
+    rbeacon:recv(Beacon,200).
 
 unsubscribe2({ok, Beacon}) ->
     rbeacon:unsubscribe(Beacon).
