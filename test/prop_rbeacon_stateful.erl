@@ -42,7 +42,7 @@ command(S) ->
            {call, ?MODULE, unsubscribe, [S#test_state.rbeacon]},
            {call, ?MODULE, noecho, [S#test_state.rbeacon]},
            {call, ?MODULE, broadcast_ip, [S#test_state.rbeacon]},
-           %{call, ?MODULE, silence, [S#test_state.rbeacon]},
+           {call, ?MODULE, silence, [S#test_state.rbeacon]},
            
            {call, ?MODULE, new2, [user_udp_port()]},
            {call, ?MODULE, close2, [S#test_state.rbeacon2]},
@@ -50,8 +50,8 @@ command(S) ->
            {call, ?MODULE, subscribe2, [S#test_state.rbeacon2]},
            {call, ?MODULE, recv2, [S#test_state.rbeacon2]},
            {call, ?MODULE, unsubscribe2, [S#test_state.rbeacon2]},
-           {call, ?MODULE, noecho2, [S#test_state.rbeacon2]}
-           %{call, ?MODULE, silence2, [S#test_state.rbeacon2]}
+           {call, ?MODULE, noecho2, [S#test_state.rbeacon2]},
+           {call, ?MODULE, silence2, [S#test_state.rbeacon2]}
           ]).
 
 % UDP ports 49152 through 65535
@@ -127,7 +127,7 @@ precondition(S, {call, ?MODULE, subscribe2, [_Beacon, _Binary]}) ->
     S#test_state.rbeacon2 =/= null;
 precondition(S, {call, ?MODULE, recv2, [_Beacon]}) ->
     ((S#test_state.rbeacon2 =/= null ) and (S#test_state.message2 =/= null) and (S#test_state.subscribed2 == true)and (S#test_state.noecho2==false)) or 
-     ((S#test_state.rbeacon =/= null ) and (S#test_state.rbeacon =/= null ) and (S#test_state.message =/= null) and (S#test_state.subscribed == true));
+     ((S#test_state.rbeacon =/= null ) and (S#test_state.rbeacon2 =/= null ) and (S#test_state.message =/= null) and (S#test_state.subscribed == true));
 precondition(S, {call, ?MODULE, unsubscribe2, [_Beacon]}) ->
     (S#test_state.rbeacon2 =/= null ) and (S#test_state.subscribed2 == true);   
 precondition(S, {call, ?MODULE, noecho2, [_Beacon]}) ->
