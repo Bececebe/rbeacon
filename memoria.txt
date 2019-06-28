@@ -22,7 +22,7 @@ Test 7 creator_can_control_test() Aumenta cobertura y responde a una posible sec
 
 Test 8 not_creator_cannot_control_test() No auenta cobertura de forma muy apreciable.
 
- Test 9 silence_test()  Auenta cobertura de forma muy apreciable. Caso de prueba interesante que comprueba una secuencia habitual de uso ( tenemos un cliente que
+ Test 9 silence_test()  Aumenta cobertura de forma muy apreciable. Caso de prueba interesante que comprueba una secuencia habitual de uso ( tenemos un cliente que
 se subscribe,silenciamos el envio y esperamos para comprobar que no se  recibe nada puesto q se ha silenciado)
 
 Test 10 set_interval_twice_test() Aumenta la cobertura pero no comprueba los efectos secundarios que tiene la interacción. No se puede asegurar que el set_interval cambie
@@ -38,16 +38,16 @@ close_closed_beacon_test() -> Tecnica Transición entre estados
 
 subscribe_using_string_and_filtering_test() -> Tecnica Transición entre estados
 
-subscription_unsubscription_test() -> Tecnica Transición entre estados
+subscription_unsubscription_test() -> Tecnica Transición entre estados (prueba negativa)
 
 set_invalid_interval_test() -> Análisis de particiones equivalentes (prueba negativa)
 
 setopts_test() -> Tecnica Transición entre estados
 
-creator_can_control_test() -> Tecnica Transición entre estados
+creator_can_control_test() -> Tecnica Transición entre estados (prueba negativa)
 
 not_creator_cannot_control_test() -> Tecnica Transición entre estados
 
-silence_test() -> Tecnica Transición entre estados
+silence_test() -> Tecnica Transición entre estados  (prueba negativa)
 
-set_interval_twice_test() ->
+set_interval_twice_test() -> Tecnica Transición entre estados
